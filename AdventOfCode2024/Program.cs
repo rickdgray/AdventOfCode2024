@@ -1,17 +1,7 @@
 ﻿using System.Reflection;
 
 var workingDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
-var path = Path.Combine(workingDirectory?.Parent?.Parent?.Parent?.FullName
-    ?? throw new DirectoryNotFoundException(), "Data", "Day01.txt");
-using var fileStream = File.OpenRead(path);
-using var streamReader = new StreamReader(fileStream);
-
-var data = new List<string>();
-string? line;
-while ((line = streamReader.ReadLine()) != null)
-{
-    data.Add(line);
-}
+var dataPath = Path.Combine(workingDirectory.FullName, "Data");
 
 var assembly = Assembly.GetExecutingAssembly();
 var types = assembly.GetTypes().Where(t => t.Namespace == "AdventOfCode2024");
@@ -19,6 +9,17 @@ foreach (var type in types)
 {
     if (type.GetInterface("IDay") != null)
     {
+        var filePath = Path.Combine(dataPath, $"{type.Name}.txt");
+        using var fileStream = File.OpenRead(filePath);
+        using var streamReader = new StreamReader(fileStream);
+
+        var data = new List<string>();
+        string? line;
+        while ((line = streamReader.ReadLine()) != null)
+        {
+            data.Add(line);
+        }
+
         var instance = Activator.CreateInstance(type);
 
         var part1 = type.GetMethod("Part1");
