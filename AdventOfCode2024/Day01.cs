@@ -26,7 +26,28 @@ namespace AdventOfCode2024
 
         public long Part2(List<string> data)
         {
-            return 0;
+            var left_list = new List<long>();
+            var right_list = new List<long>();
+            foreach (var line in data)
+            {
+                left_list.Add(long.Parse(line.Split("   ")[0]));
+                right_list.Add(long.Parse(line.Split("   ")[1]));
+            }
+
+            // disgusting brute force; could memoize if I cared
+            var simScore = 0L;
+            for (int i = 0; i < left_list.Count; i++)
+            {
+                for (int j = 0; j < right_list.Count; j++)
+                {
+                    if (left_list[i] == right_list[j])
+                    {
+                        simScore += left_list[i];
+                    }
+                }
+            }
+
+            return simScore;
         }
     }
 }
