@@ -29,9 +29,16 @@ foreach (var type in types)
             long part1Result = (long)(part1?.Invoke(instance, [data]) ?? 0L);
             Console.WriteLine($"{type.Name} Part1: {part1Result}");
         }
-        catch (NotImplementedException)
+        catch (TargetInvocationException ex)
         {
-            Console.WriteLine($"{type.Name} Part1:");
+            if (ex.InnerException is NotImplementedException)
+            {
+                Console.WriteLine($"{type.Name} Part1:");
+            }
+            else
+            {
+                throw;
+            }
         }
 
         try
@@ -39,9 +46,18 @@ foreach (var type in types)
             long part2Result = (long)(part2?.Invoke(instance, [data]) ?? 0L);
             Console.WriteLine($"{type.Name} Part2: {part2Result}");
         }
-        catch (NotImplementedException)
+        catch (TargetInvocationException ex)
         {
-            Console.WriteLine($"{type.Name} Part2:");
+            if (ex.InnerException is NotImplementedException)
+            {
+                Console.WriteLine($"{type.Name} Part2:");
+            }
+            else
+            {
+                throw;
+            }
         }
+
+        Console.WriteLine();
     }
 }
