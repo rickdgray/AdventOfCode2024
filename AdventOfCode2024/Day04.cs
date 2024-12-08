@@ -120,10 +120,46 @@ namespace AdventOfCode2024
 
         public long Part2(List<string> data)
         {
-            throw new NotImplementedException();
+            var regex = MasRegex();
+            var matrix = new List<List<char>>(data.Count * data.First().Length);
+
+            foreach (var line in data)
+            {
+                matrix.Add([.. line.ToCharArray()]);
+            }
+
+            var count = 0L;
+
+            for (var i = 1; i < matrix.Count - 1; i++)
+            {
+                for (var j = 1; j < matrix.First().Count - 1; j++)
+                {
+                    // \ . ^
+                    // . X .
+                    // / . v
+                    var line = new StringBuilder();
+                    line.Append(matrix[i - 1][j - 1]);
+                    line.Append(matrix[i][j]);
+                    line.Append(matrix[i + 1][j + 1]);
+                    line.Append(matrix[i + 1][j - 1]);
+                    line.Append(matrix[i][j]);
+                    line.Append(matrix[i - 1][j + 1]);
+
+                    var match = regex.Match(line.ToString());
+                    if (match.Success)
+                    {
+                        count++;
+                    }
+                }
+            }
+
+            return count;
         }
 
         [GeneratedRegex(@"XMAS")]
         private static partial Regex XmasRegex();
+
+        [GeneratedRegex(@"MASMAS|MASSAM|SAMMAS|SAMSAM")]
+        private static partial Regex MasRegex();
     }
 }
