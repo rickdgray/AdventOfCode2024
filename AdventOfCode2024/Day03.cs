@@ -7,10 +7,10 @@ namespace AdventOfCode2024
         public long Part1(List<string> data)
         {
             var sum = 0L;
+            var regex = MulFunctionRegex();
 
             foreach (var line in data)
             {
-                var regex = MulFunctionRegex();
                 var matches = regex.Matches(line);
                 foreach (Match match in matches)
                 {
@@ -26,10 +26,51 @@ namespace AdventOfCode2024
 
         public long Part2(List<string> data)
         {
-            throw new NotImplementedException();
+            var sum = 0L;
+            var regex = ConditionalMulFunctionRegex();
+
+            var instructions = new Queue<string>();
+            foreach (var line in data)
+            {
+                var matches = regex.Matches(line);
+                foreach (Match match in matches)
+                {
+                    instructions.Enqueue(match.Value);
+                }
+            }
+
+            var isMulEnabled = true;
+            while (instructions.Count > 0)
+            {
+                var instruction = instructions.Dequeue();
+                if (instruction == "do()")
+                {
+                    isMulEnabled = true;
+                    continue;
+                }
+                
+                if (instruction == "don't()")
+                {
+                    isMulEnabled = false;
+                    continue;
+                }
+
+                if (isMulEnabled)
+                {
+                    var values = instruction.Split(',');
+                    var a = int.Parse(values[0][4..]);
+                    var b = int.Parse(values[1][..^1]);
+                    sum += a * b;
+                }
+            }
+
+            return sum;
         }
 
         [GeneratedRegex(@"mul\(\d+,\d+\)")]
         private static partial Regex MulFunctionRegex();
+
+        [GeneratedRegex(@"mul\(\d+,\d+\)|do\(\)|don't\(\)")]
+        private static partial Regex ConditionalMulFunctionRegex();
     }
 }
